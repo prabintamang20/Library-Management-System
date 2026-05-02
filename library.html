@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="library.css">
+</head>
+<body>
+    <div class="auth-shell active-auth" id="authShell">
+        <div class="auth-card">
+            <div id="loginPage" class="auth-page active">
+                <div class="auth-header">
+                    <p class="eyebrow">Welcome Back</p>
+                    <h1>Login to Your Library</h1>
+                    <p class="subtitle">Access the library dashboard and manage books in one place.</p>
+                </div>
+                <div class="auth-form">
+                    <label>
+                        Email
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    </label>
+                    <label>
+                        Password
+                        <input type="password" id="loginPassword" placeholder="Enter password" required>
+                    </label>
+                    <div class="form-row">
+                        <label class="remember-row">
+                            <input type="checkbox" id="rememberMe">
+                            Remember me
+                        </label>
+                        <button class="link-btn" id="gotoForgot" type="button">Forgot Password?</button>
+                    </div>
+                    <button class="btn btn-primary" id="loginButton">Login</button>
+                    <p class="auth-footer">Don't have an account? <button class="link-btn" id="gotoSignup" type="button">Sign Up</button></p>
+                </div>
+            </div>
+            <div id="forgotPage" class="auth-page">
+                <div class="auth-header">
+                    <p class="eyebrow">Recover Access</p>
+                    <h1>Forgot Password</h1>
+                    <p class="subtitle">Reset your password quickly and return to the library dashboard.</p>
+                </div>
+                <div class="auth-form">
+                    <label>
+                        Registered Email
+                        <input type="email" id="forgotEmail" placeholder="you@example.com" required>
+                    </label>
+                    <label>
+                        New Password
+                        <input type="password" id="forgotPassword" placeholder="Enter new password" required>
+                    </label>
+                    <label>
+                        Confirm Password
+                        <input type="password" id="forgotConfirm" placeholder="Confirm new password" required>
+                    </label>
+                    <button class="btn btn-primary" id="resetButton">Reset Password</button>
+                    <p class="auth-footer">Back to <button class="link-btn" id="gotoLoginFromForgot" type="button">Login</button></p>
+                </div>
+            </div>
+            <div id="signupPage" class="auth-page">
+                <div class="auth-header">
+                    <p class="eyebrow">Create Account</p>
+                    <h1>Register for Library Access</h1>
+                    <p class="subtitle">Quickly set up an account to start managing your book inventory.</p>
+                </div>
+                <div class="auth-form">
+                    <label>
+                        Full Name
+                        <input type="text" id="signupName" placeholder="John Doe" required>
+                    </label>
+                    <label>
+                        Role
+                        <select id="signupRole" required>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </label>
+                    <label>
+                        Position
+                        <input type="text" id="signupPosition" placeholder="Class Representative / Science Teacher" required>
+                    </label>
+                    <label>
+                        Email
+                        <input type="email" id="signupEmail" placeholder="you@example.com" required>
+                    </label>
+                    <label>
+                        Password
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </label>
+                    <label>
+                        Confirm Password
+                        <input type="password" id="signupConfirm" placeholder="Confirm password" required>
+                    </label>
+                    <button class="btn btn-primary" id="signupButton">Sign Up</button>
+                    <p class="auth-footer">Already have an account? <button class="link-btn" id="gotoLogin" type="button">Login</button></p>
+                </div>
+            </div>
+            <p class="auth-note" id="authMessage"></p>
+        </div>
+    </div>
+
+    <div class="page-shell" id="libraryShell" style="display:none;">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Library Management</p>
+                <h1>Modern Library Dashboard</h1>
+                <p class="subtitle">Track book inventory, members, and borrowing status with a clean professional UI.</p>
+            </div>
+            <div class="topbar-controls">
+                <span class="user-chip" id="currentUserName">Guest</span>
+                <button class="btn btn-secondary" id="openProfile">Profile</button>
+                <button class="btn btn-secondary hidden" id="manageRequestsButton">Manage Requests</button>
+                <button class="btn btn-primary hidden" id="sellBookButton">Sell Book</button>
+                <button class="btn btn-primary hidden" id="newBookButton">+ Add New Book</button>
+                <button class="btn btn-secondary" id="themeToggle">🌙 Dark Mode</button>
+                <button class="btn btn-secondary" id="logoutButton">Logout</button>
+            </div>
+        </header>
+
+        <section class="summary-grid">
+            <article class="summary-card">
+                <span class="summary-label">Total Books</span>
+                <h2 id="totalBooks">0</h2>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label">Available</span>
+                <h2 id="availableBooks">0</h2>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label">Borrowed</span>
+                <h2 id="borrowedBooks">0</h2>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label" id="pendingRequestsLabel">Pending Requests</span>
+                <h2 id="pendingRequests">0</h2>
+            </article>
+        </section>
+
+        <section class="control-panel">
+            <div class="search-box">
+                <label for="searchInput">Search books</label>
+                <input type="search" id="searchInput" placeholder="Search by title, author, or ISBN">
+            </div>
+            <div class="filters">
+                <label for="genreFilter">Genre</label>
+                <select id="genreFilter">
+                    <option value="all">All genres</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Nonfiction">Nonfiction</option>
+                    <option value="Science">Science</option>
+                    <option value="History">History</option>
+                    <option value="Technology">Technology</option>
+                </select>
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option value="all">All statuses</option>
+                    <option value="available">Available</option>
+                    <option value="borrowed">Borrowed</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="table-panel">
+            <div class="panel-header">
+                <h2>Book Inventory</h2>
+                <p>Maintain your catalog with quick edit and status controls.</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Year</th>
+                            <th>ISBN</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookTableBody">
+                        <tr><td colspan="8" class="empty-row">No books added yet. Use the button above to add a book.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="request-panel hidden" id="requestPanel">
+            <div class="panel-header">
+                <h2>Requests Dashboard</h2>
+                <p>Review and approve buy/sell requests from students and teachers.</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Request</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Book</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestTableBody">
+                        <tr><td colspan="7" class="empty-row">No pending requests to review.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="transaction-panel hidden" id="transactionPanel">
+            <div class="panel-header">
+                <h2>Transaction History</h2>
+                <p>Track your approved and rejected book requests.</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Request</th>
+                            <th>Book</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        <tr><td colspan="6" class="empty-row">No transaction history yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-backdrop" id="bookModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">Catalog Entry</p>
+                    <h2 id="modalTitle">Add New Book</h2>
+                </div>
+                <button class="icon-btn" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookForm">
+                    <div class="form-grid">
+                        <label>
+                            Book Title
+                            <input type="text" id="bookTitle" required placeholder="The Great Gatsby">
+                        </label>
+                        <label>
+                            Author
+                            <input type="text" id="bookAuthor" required placeholder="F. Scott Fitzgerald">
+                        </label>
+                        <label>
+                            Genre
+                            <select id="bookGenre" required>
+                                <option value="Fiction">Fiction</option>
+                                <option value="Nonfiction">Nonfiction</option>
+                                <option value="Science">Science</option>
+                                <option value="History">History</option>
+                                <option value="Technology">Technology</option>
+                            </select>
+                        </label>
+                        <label>
+                            Publication Year
+                            <input type="number" id="bookYear" min="1000" max="2100" required placeholder="2024">
+                        </label>
+                        <label>
+                            ISBN
+                            <input type="text" id="bookISBN" required placeholder="978-1234567890">
+                        </label>
+                        <label>
+                            Quantity
+                            <input type="number" id="bookQuantity" min="1" required value="1">
+                        </label>
+                        <label class="full-width">
+                            Status
+                            <select id="bookStatus" required>
+                                <option value="available">Available</option>
+                                <option value="borrowed">Borrowed</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Book</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="requestModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">Sell Request</p>
+                    <h2 id="requestModalTitle">Request to Sell a Book</h2>
+                </div>
+                <button class="icon-btn" id="closeRequestModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="requestForm">
+                    <div class="form-grid">
+                        <label>
+                            Book Title
+                            <input type="text" id="requestBookTitle" required placeholder="The Great Gatsby">
+                        </label>
+                        <label>
+                            Author
+                            <input type="text" id="requestBookAuthor" required placeholder="F. Scott Fitzgerald">
+                        </label>
+                        <label>
+                            Genre
+                            <select id="requestBookGenre" required>
+                                <option value="Fiction">Fiction</option>
+                                <option value="Nonfiction">Nonfiction</option>
+                                <option value="Science">Science</option>
+                                <option value="History">History</option>
+                                <option value="Technology">Technology</option>
+                            </select>
+                        </label>
+                        <label>
+                            Publication Year
+                            <input type="number" id="requestBookYear" min="1000" max="2100" required placeholder="2024">
+                        </label>
+                        <label>
+                            ISBN
+                            <input type="text" id="requestBookISBN" required placeholder="978-1234567890">
+                        </label>
+                        <label>
+                            Quantity
+                            <input type="number" id="requestBookQuantity" min="1" required value="1">
+                        </label>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-ghost" id="cancelRequestModal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="profileModal">
+        <div class="modal-card profile-modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">Profile Settings</p>
+                    <h2 id="profileModalTitle">My Profile</h2>
+                </div>
+                <button class="icon-btn" id="closeProfileModal">✕</button>
+            </div>
+            <div class="modal-body profile-modal-body">
+                <div class="profile-grid">
+                    <div class="profile-summary">
+                        <div class="avatar-preview" id="avatarPreview">A</div>
+                        <h3 id="profileName">Guest User</h3>
+                        <p id="profilePosition">Position not set</p>
+                        <p id="profileRole">Role: Visitor</p>
+                        <p class="profile-email" id="profileEmail">Email will appear here</p>
+                    </div>
+                    <div class="profile-tabs">
+                        <button class="tab-btn active" id="profileTabBtn">Profile</button>
+                        <button class="tab-btn" id="passwordTabBtn">Change Password</button>
+                        <button class="tab-btn" id="settingsTabBtn">Settings</button>
+                    </div>
+                    <div class="profile-tab active" id="profileTabContent">
+                        <label>
+                            Full Name
+                            <input type="text" id="editName" placeholder="John Doe">
+                        </label>
+                        <label>
+                            Position
+                            <input type="text" id="editPosition" placeholder="Librarian / Manager">
+                        </label>
+                        <label>
+                            Profile Picture
+                            <input type="file" id="editAvatar" accept="image/*">
+                        </label>
+                        <button class="btn btn-primary" id="saveProfileButton">Save Profile</button>
+                    </div>
+                    <div class="profile-tab" id="passwordTabContent">
+                        <label>
+                            Current Password
+                            <input type="password" id="currentPassword" placeholder="Current password">
+                        </label>
+                        <label>
+                            New Password
+                            <input type="password" id="newPassword" placeholder="New password">
+                        </label>
+                        <label>
+                            Confirm New Password
+                            <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+                        </label>
+                        <button class="btn btn-primary" id="changePasswordButton">Change Password</button>
+                    </div>
+                    <div class="profile-tab" id="settingsTabContent">
+                        <label class="switch-row">
+                            <span>Email Notifications</span>
+                            <input type="checkbox" id="emailNotifications">
+                        </label>
+                        <label class="switch-row">
+                            <span>Dark Mode Preferred</span>
+                            <input type="checkbox" id="defaultDarkMode">
+                        </label>
+                        <button class="btn btn-primary" id="saveSettingsButton">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="library.js" defer></script>
+</body>
+</html>
